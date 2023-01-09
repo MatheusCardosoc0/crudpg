@@ -12,5 +12,5 @@
 }
 
 .input1{
-  @apply w-60 rounded-lg
+  @apply w-60 rounded-lg px-2
 }

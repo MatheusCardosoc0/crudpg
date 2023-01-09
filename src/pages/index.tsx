@@ -2,10 +2,12 @@ import axios from 'axios'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import CardStudent from '../components/CardStudent'
 import * as Dialog from '@radix-ui/react-dialog'
 import Modal from '../components/Modal'
+import { AiOutlineUserAdd } from 'react-icons/ai'
+import { GrUpdate } from 'react-icons/gr'
 
 
 export interface studentsProps {
@@ -17,6 +19,31 @@ export interface studentsProps {
 const Home: NextPage = () => {
 
   const [students, setStudents] = useState<studentsProps[]>([])
+
+
+
+  async function addStudent(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData)
+
+    if (!data.nota) {
+      return alert('2')
+    }
+
+    try {
+      await axios.post('http://localhost:3000/api/createStudent', {
+        name: data.name,
+        nota: Number(data.nota)
+      })
+
+    } catch (error) {
+      console.log(error)
+
+    }
+
+    getStudents()
+  }
 
   async function getStudents() {
     const url = 'http://localhost:3000/api/students'
@@ -44,11 +71,18 @@ const Home: NextPage = () => {
 
           <Dialog.Root>
 
-            <Dialog.Trigger>
-           a
-            </Dialog.Trigger>
+            <div className='flex gap-3'>
+              <Dialog.Trigger className='bg-purple-700 border-2 border-yellow-500 shadow-[1px_1px_10px_black]'>
+                <AiOutlineUserAdd className='text-green-400' />
+              </Dialog.Trigger>
 
-            <Modal />
+              <button onClick={getStudents}
+               className="bg-blue-400 p-1 border-2 border-yellow-500">
+                <GrUpdate color='blue' />
+              </button>
+            </div>
+
+            <Modal addStudent={addStudent} />
           </Dialog.Root>
 
         </div>
